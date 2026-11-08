@@ -81,3 +81,136 @@ class GestorTramites:
             if self.lista_tramites[i].codigo == cod_buscado:
                 return i
         return -1
+
+# --- SUBIDO POR DAVID ---
+    def consultar(self):
+        if len(self.lista_tramites) == 0:
+         print("\n[!] No hay trámites registrados en el sistema.")
+         return
+                
+        self.ordenar_por_nombre_burbuja()
+        self.mostrar_matriz_bidimensional()
+            
+                
+        buscado = int(input("Ingrese el codigo NUMÉRICO a buscar: "))
+        pos = self.buscar_secuencialmente(buscado)
+            
+        if pos != -1:
+            t = self.lista_tramites[pos]
+            print("\n--- TRAMITE ENCONTRADO ---")
+            print(f"Codigo: {t.codigo} | DNI: {t.dni} | Nombre: {t.nombre} {t.apellido}")
+            print(f"Tipo: {t.tipo} | Area: {t.area} | Estado: {t.estado} | Fecha: {t.fecha}")
+        else:
+            print("[X] Codigo no encontrado.")
+    
+    def cambiar_estado(self, rol):
+            if rol != "jefatura":
+                print("\n[X] Acceso denegado: Solo Jefatura puede derivar o modificar trámites.")
+                return
+                        
+            if len(self.lista_tramites) == 0:
+                print("\n[!] No hay trámites para modificar.")
+                return
+                        
+            self.ordenar_por_nombre_burbuja()
+            self.mostrar_matriz_bidimensional()
+                       
+                        
+            actualizar = int(input("Ingrese el codigo NUMÉRICO a modificar: "))
+            pos = self.buscar_secuencialmente(actualizar)
+                    
+            if pos != -1:
+                nuevo_estado = ""
+                while nuevo_estado != "En evaluacion" and nuevo_estado != "Denegado" and nuevo_estado != "Aprobado":
+                    print("\nEstados disponibles:")
+                    print(f" 1. En evaluacion")
+                    print(f" 2. Denegado")
+                    print(f" 3. Aprobado")
+                    entrada_estado = input("Escriba el número del estado para el trámite (1-3): ")
+                    if entrada_estado == "1":
+                        nuevo_estado = "En evaluacion"
+                    elif entrada_estado == "2":
+                        nuevo_estado = "Denegado"
+                    elif entrada_estado == "3":
+                        nuevo_estado = "Aprobado"
+                    else:
+                        print("[X] Error: Estado inválido o vacío. Intente nuevamente.")
+                nueva_area = ""
+                while nueva_area != "Archivo" and nueva_area != "Medico Jefe" and nueva_area != "Diris Lima norte" and nueva_area != "Hospital Referencia":
+                    print("\nAreas disponibles:")
+                    print(f" 1. Archivo")
+                    print(f" 2. Medico Jefe")
+                    print(f" 3. Diris Lima norte")
+                    print(f" 4. Hospital Referencia")
+                    entrada_area = input("Escriba el número del área para derivar el trámite (1-4): ")
+                    if entrada_area == "1":
+                        nueva_area = "Archivo"
+                    elif entrada_area == "2":
+                        nueva_area = "Medico Jefe"
+                    elif entrada_area == "3":
+                        nueva_area = "Diris Lima norte"
+                    elif entrada_area == "4":
+                        nueva_area = "Hospital Referencia"
+                    else:
+                        print("[X] Error: Área inválida o vacía. Intente nuevamente.")
+                        
+                self.lista_tramites[pos].estado = nuevo_estado
+                self.lista_tramites[pos].area = nueva_area
+                guardar_tramites(self.lista_tramites)
+                print("\n[OK] Tramite actualizado y derivado correctamente.")
+            else:
+                print("[X] Codigo no encontrado.")
+    
+    def eliminar(self, rol):
+            if rol != "jefatura":
+                print("\n[X] Acceso denegado: Solo Jefatura puede eliminar.")
+                return
+            if len(self.lista_tramites) == 0:
+                print("\n[!] No hay trámites para eliminar.")
+                return 
+            self.ordenar_por_nombre_burbuja()
+            self.mostrar_matriz_bidimensional()
+            cod = int(input("Ingrese el código NUMÉRICO a eliminar: "))
+            pos = self.buscar_secuencialmente(cod)
+            
+            if pos != -1:
+                tramite_eliminado = self.lista_tramites.pop(pos)
+                guardar_tramites(self.lista_tramites)
+                print(f"\n[OK] Trámite {tramite_eliminado.codigo} de '{tramite_eliminado.nombre}' eliminado correctamente.")
+            else:
+                print("[X] Código no encontrado.")
+    
+    def ordenar_por_nombre_burbuja(self):
+            n = len(self.lista_tramites)
+            for i in range(n - 1):
+                for j in range(n - 1 - i):
+                    if (self.lista_tramites[j].apellido > self.lista_tramites[j + 1].apellido or (self.lista_tramites[j].apellido == self.lista_tramites[j + 1].apellido and self.lista_tramites[j].nombre > self.lista_tramites[j + 1].nombre)):
+                        self.lista_tramites[j], self.lista_tramites[j + 1] = self.lista_tramites[j + 1], self.lista_tramites[j]
+    
+    def mostrar_matriz_bidimensional(self):
+            if len(self.lista_tramites) == 0:
+                print("\n[!] No hay trámites registrados para mostrar.")
+                return
+            matriz = [["CÓDIGO", "DNI", "NOMBRE","APELLIDO", "ÁREA", "ESTADO", "TIPO", "FECHA"]]
+            
+            for t in self.lista_tramites:
+                fila = [t.codigo, t.dni, f"{t.nombre}", f"{t.apellido}", t.area, t.estado,t.tipo, t.fecha]
+                matriz.append(fila)
+                
+            print("\n--- TRÁMITES DISPONIBLES ---")
+            for f in range(len(matriz)):
+                fila_str = ""
+                for c in range(len(matriz[f])):
+                    fila_str += f"{str(matriz[f][c]):<20}" 
+                print(fila_str)
+                if f == 0:
+                    print("-" * 160)
+    
+    def reporte_archivo(self):
+            print("\n--- REPORTE DE ARCHIVO ---")
+            contador = 0
+            for t in self.lista_tramites:
+                if t.area == "Archivo":
+                    contador += 1
+                    print(f"Tramite: {t.codigo} | Solicitante: {t.nombre} {t.apellido} | Estado: {t.estado} | Tipo: {t.tipo} | Fecha: {t.fecha}")
+            print(f"Total en Archivo: {contador}")
