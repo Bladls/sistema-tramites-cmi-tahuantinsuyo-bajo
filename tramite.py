@@ -1,4 +1,3 @@
-# --- AVANCE 1 (PARTE 1) - SUBIDO POR DAVID ---
 # Módulo tramite: define los datos de un trámite.
 
 class Tramite:
