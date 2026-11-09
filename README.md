@@ -69,7 +69,7 @@ Cada captura prueba una versión del proyecto y está guardada en la carpeta `ca
 ### Foto del equipo
 
 **Lugar:** Reunión por la plataforma Meet  
-**Fecha:** 19/10/2026
+**Fecha:** 07/11/2026
 
 ![Foto del equipo](capturas/equipo.png)
 
