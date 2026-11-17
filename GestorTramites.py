@@ -1,7 +1,7 @@
 # --- SUBIDO POR JOSUE ---
 # Módulo gestor: administra la lista de trámites y todas las operaciones del sistema.
 from datetime import datetime
-from Tramite import Tramite
+from tramite import Tramite
 from archivo_datos import cargar_tramites, guardar_tramites
 
 TIPOS = ["Referencia", "SIS", "Certificado_Salud", "Descanso_Medico"]

@@ -3,7 +3,7 @@ from tkinter import Tk, Frame, Label, LabelFrame
 from tkinter import ttk
 
 from GestorTramites import GestorTramites, TIPOS, ESTADOS, AREAS
-from Autenticador import Autenticador
+from autenticador import Autenticador
 import mensajes
 from texto import limpiar_nombre, limpiar_texto, es_dni_valido, es_vacio, a_entero
 from controles import crear_caja, crear_combo, crear_boton, poner_texto, limpiar

@@ -3,7 +3,7 @@
 # Formato: codigo|fecha|tipo|dni|nombre|apellido|area|estado
 
 import os
-from Tramite import Tramite
+from tramite import Tramite
 
 RUTA = "tramites.txt"
 
