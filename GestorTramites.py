@@ -2,7 +2,7 @@
 # Módulo gestor: administra la lista de trámites y todas las operaciones del sistema.
 from datetime import datetime
 from tramite import Tramite
-from archivo_datos import cargar_tramites, guardar_tramites
+from archivo_datos import cargar_tramites, guardar_tramites, cargar_contador, guardar_contador
 
 TIPOS = ["Referencia", "SIS", "Certificado_Salud", "Descanso_Medico"]
 ESTADOS = ["Registrado", "En evaluacion", "Denegado", "Aprobado"]
@@ -14,7 +14,7 @@ class GestorTramites:
         self.lista_tramites = cargar_tramites()
 
     def siguiente_codigo(self):
-        mayor = 0
+        mayor = cargar_contador()
         for t in self.lista_tramites:
             if t.codigo > mayor:
                 mayor = t.codigo
@@ -25,6 +25,7 @@ class GestorTramites:
         nuevo = Tramite(self.siguiente_codigo(), fecha, tipo, dni, nombre, apellido, "Jefatura", "Registrado")
         self.lista_tramites.append(nuevo)
         guardar_tramites(self.lista_tramites)
+        guardar_contador(nuevo.codigo)  
         return nuevo
 
     def buscar(self, codigo):
