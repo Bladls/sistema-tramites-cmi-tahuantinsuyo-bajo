@@ -66,7 +66,8 @@ class VentanaTramites:
         crear_boton(acciones, "Mostrar", self.mostrar, 1, 0)
         crear_boton(acciones, "Reporte Archivo", self.reporte_archivo, 1, 1)
         crear_boton(acciones, "Limpiar", self.limpiar, 1, 2)
-        crear_boton(acciones, "Salir", ventana.destroy, 1, 3)
+        crear_boton(acciones, "Ordenar código", self.mostrar_por_codigo, 1, 3)
+        crear_boton(acciones, "Salir", ventana.destroy, 2, 0)
         self.aplicar_permisos()
 
         # Tabla de datos (Treeview)
@@ -201,6 +202,10 @@ class VentanaTramites:
 
     def mostrar(self):
         self.llenar_tabla(self.gestor.obtener_todos())
+
+    def mostrar_por_codigo(self):
+        self.gestor.ordenar_por_codigo()
+        self.llenar_tabla(self.gestor.lista_tramites)        
 
     def reporte_archivo(self):
         lista = self.gestor.reporte_archivo()

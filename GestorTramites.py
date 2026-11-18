@@ -69,6 +69,20 @@ class GestorTramites:
                     lista[j] = b
                     lista[j + 1] = a
 
+
+    def ordenar_por_codigo(self):
+        # Ordena por código de menor a mayor (orden de llegada a mesa de partes)
+        lista = self.lista_tramites
+        n = len(lista)
+        for i in range(n - 1):
+            for j in range(n - 1 - i):
+                a = lista[j]
+                b = lista[j + 1]
+                if a.codigo > b.codigo:
+                    lista[j] = b
+                    lista[j + 1] = a
+
+
     def obtener_todos(self):
         self.ordenar_burbuja()
         return self.lista_tramites
