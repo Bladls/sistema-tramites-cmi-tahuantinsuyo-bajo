@@ -3,6 +3,7 @@
 from datetime import datetime
 from tramite import Tramite
 from archivo_datos import cargar_tramites, guardar_tramites, cargar_contador, guardar_contador
+from texto import clave_orden
 
 TIPOS = ["Referencia", "SIS", "Certificado_Salud", "Descanso_Medico"]
 ESTADOS = ["Registrado", "En evaluacion", "Denegado", "Aprobado"]
@@ -61,12 +62,15 @@ class GestorTramites:
     def ordenar_burbuja(self):
         # Ordena por apellido y, si empata, por nombre
         lista = self.lista_tramites
+        lista = self.lista_tramites
         n = len(lista)
         for i in range(n - 1):
             for j in range(n - 1 - i):
                 a = lista[j]
                 b = lista[j + 1]
-                if a.apellido > b.apellido or (a.apellido == b.apellido and a.nombre > b.nombre):
+                apellido_a = clave_orden(a.apellido)
+                apellido_b = clave_orden(b.apellido)
+                if apellido_a > apellido_b or (apellido_a == apellido_b and clave_orden(a.nombre) > clave_orden(b.nombre)):
                     lista[j] = b
                     lista[j + 1] = a
 
