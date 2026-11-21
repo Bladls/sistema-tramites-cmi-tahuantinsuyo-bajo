@@ -62,7 +62,6 @@ class GestorTramites:
     def ordenar_burbuja(self):
         # Ordena por apellido y, si empata, por nombre
         lista = self.lista_tramites
-        lista = self.lista_tramites
         n = len(lista)
         for i in range(n - 1):
             for j in range(n - 1 - i):
