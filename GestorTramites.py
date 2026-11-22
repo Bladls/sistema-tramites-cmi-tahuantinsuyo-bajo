@@ -1,4 +1,3 @@
-# --- SUBIDO POR JOSUE ---
 # Módulo gestor: administra la lista de trámites y todas las operaciones del sistema.
 from datetime import datetime
 from tramite import Tramite
@@ -97,3 +96,69 @@ class GestorTramites:
             if t.area == "Archivo":
                 lista.append(t)
         return lista
+
+    def ordenar_seleccion(self):
+        # Método selección: en cada vuelta busca el menor apellido (y nombre) y lo pone en su lugar
+        lista = self.lista_tramites
+        n = len(lista)
+        for i in range(n - 1):
+            menor = i
+            for j in range(i + 1, n):
+                a = lista[j]
+                b = lista[menor]
+                apellido_a = clave_orden(a.apellido)
+                apellido_b = clave_orden(b.apellido)
+                if apellido_a < apellido_b or (apellido_a == apellido_b and clave_orden(a.nombre) < clave_orden(b.nombre)):
+                    menor = j
+            if menor != i:
+                temporal = lista[i]
+                lista[i] = lista[menor]
+                lista[menor] = temporal
+
+    def buscar_por_apellido(self, texto):
+        # Búsqueda por apellido: sin tildes ni mayúsculas y por parte del apellido (find = IndexOf)
+        texto = clave_orden(texto.strip())
+        encontrados = []
+        for t in self.lista_tramites:
+            if clave_orden(t.apellido).find(texto) != -1:
+                encontrados.append(t)
+        return encontrados
+    
+    def como_matriz(self):
+        # Matriz (lista de listas): matriz[i][j] es el dato j del trámite i, en el orden de la tabla
+        matriz = []
+        for t in self.obtener_todos():
+            fila = [t.codigo, t.dni, t.nombre, t.apellido, t.tipo, t.area, t.estado, t.fecha]
+            matriz.append(fila)
+        return matriz
+    
+    def resumen_estados(self):
+        # Arreglos paralelos: estados[i] y cantidades[i] se refieren al mismo estado
+        estados = []
+        cantidades = []
+        for e in ESTADOS:
+            estados.append(e)
+            cantidades.append(0)
+        for t in self.lista_tramites:
+            for i in range(len(estados)):
+                if t.estado == estados[i]:
+                    cantidades[i] = cantidades[i] + 1
+        return estados, cantidades
+
+    def buscar_recursivo(self, codigo, i=0):
+        # Búsqueda recursiva: revisa la posición i y, si no es, se llama con i + 1
+        if i >= len(self.lista_tramites):
+            return -1
+        if self.lista_tramites[i].codigo == codigo:
+            return i
+        return self.buscar_recursivo(codigo, i + 1)
+    
+    def contar_en_area(self, area, i=0):
+        # Conteo recursivo de los trámites de un área
+        if i >= len(self.lista_tramites):
+            return 0
+        if self.lista_tramites[i].area == area:
+            suma = 1
+        else:
+            suma = 0
+        return suma + self.contar_en_area(area, i + 1)

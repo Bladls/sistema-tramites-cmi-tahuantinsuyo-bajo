@@ -6,39 +6,55 @@
 
 ## Descripción
 
-Sistema de consola desarrollado en **Python** para registrar y dar seguimiento a los trámites del Centro de Salud Materno Infantil Tahuantinsuyo Bajo (Independencia, Lima): SIS, referencias, certificados de salud y descanso médico.
+Sistema con ventanas (Tkinter) desarrollado en **Python** para registrar y dar seguimiento a los trámites del Centro de Salud Materno Infantil Tahuantinsuyo Bajo (Independencia, Lima): SIS, referencias, certificados de salud y descanso médico.
 
-Permite registrar, consultar, modificar y eliminar trámites (CRUD). Los datos se guardan en el **archivo de texto** `tramites.txt`, por lo que no se pierden al cerrar el programa. El trabajo se desarrolló con **control de versiones usando Git y GitHub**.
+Permite registrar, consultar, modificar y eliminar trámites (CRUD). Los datos se guardan en el **archivo de texto** `tramites.txt` y el último código entregado en `contador.txt`, por lo que no se pierden al cerrar el programa y los códigos no se repiten. El trabajo se desarrolló con **control de versiones usando Git y GitHub**.
 
 ## Tecnologías
 
-- Lenguaje: Python 3
+- Lenguaje: Python 3 (solo librería estándar: tkinter, datetime y os)
 - Editor: VS Code
 - Control de versiones: Git y GitHub
-- Almacenamiento: archivo de texto (`tramites.txt`)
+- Almacenamiento: archivos de texto (`tramites.txt` y `contador.txt`)
+
+## Cómo ejecutarlo
+
+Desde la carpeta del proyecto (las rutas de los archivos son relativas):
+
+```
+python main.py
+```
+
+Contraseñas de prueba: Ventanilla `1234`, Jefatura `Jefe2026`, Archivo `Admin123`.
 
 ## Estructura del proyecto
 
 ```
 sistema-tramites-cmi-tahuantinsuyo-bajo/
-├── main.py              # Menú principal y roles
+├── main.py              # Ventanas de acceso y de trámites (Tkinter)
 ├── tramite.py           # Clase Tramite (datos de un trámite)
 ├── autenticador.py      # Clase Autenticador (contraseña por rol)
-├── gestor.py            # Clase GestorTramites (operaciones del sistema)
-├── archivo_datos.py     # Guardar y leer trámites en archivo (tramites.txt)
+├── GestorTramites.py    # Clase GestorTramites (registrar, buscar, ordenar, reportar)
+├── archivo_datos.py     # Guardar y leer trámites y el contador en archivos de texto
+├── texto.py             # Limpieza y validación de textos (DNI, nombres)
+├── controles.py         # Cajas, listas desplegables y botones reutilizables
+├── mensajes.py          # Cuadros de mensaje (error, aviso, confirmación)
 ├── tramites.txt         # Archivo donde se guardan los trámites
+├── contador.txt         # Último código entregado (se crea al registrar)
 ├── capturas/            # Capturas de cada avance
 └── README.md
 ```
 
 ## Funcionalidades
 
-- Registrar un trámite (DNI, nombres, apellidos, tipo) con validación de datos y cargo de recepción.
+- Registrar un trámite (DNI, nombres, apellidos, tipo) con validación de datos y cargo de recepción (DNI oculto, por ejemplo 70****56).
 - Consultar un trámite por su código (búsqueda secuencial).
 - Modificar el estado y el área de un trámite (solo Jefatura).
 - Eliminar un trámite (solo Jefatura).
-- Mostrar todos los trámites en una tabla, ordenados por apellido y nombre (método burbuja).
-- Reporte del área de Archivo.
+- Buscar por apellido o parte de él, sin importar tildes ni mayúsculas.
+- Mostrar todos los trámites en una tabla, ordenados por apellido y nombre (método burbuja); también por código (burbuja) o por apellido con el método selección.
+- Reporte del área de Archivo, con el total contado de forma recursiva.
+- Resumen de cuántos trámites hay en cada estado.
 - Acceso con contraseña según el rol: Ventanilla, Jefatura o Archivo.
 - **Guardar y leer desde archivo:** cada cambio se guarda en `tramites.txt` y se lee al iniciar el programa.
 
@@ -65,6 +81,18 @@ Cada captura prueba una versión del proyecto y está guardada en la carpeta `ca
 | v1.5 Menú principal | Programa ejecutándose (menú) | [v1.5.png](capturas/v1.5.png) |
 | v1.6 Documentación | README visto en GitHub | [v1.6.png](capturas/v1.6.png) |
 | v2.0 Versión final | Programa guardando y leyendo datos | [v2.0.png](capturas/v2.0.png) |
+
+### Versiones con ventanas
+
+| Versión | Qué cambió |
+|---|---|
+| Version2.0 (f8ffcdd) | Paso de consola a ventanas (Tkinter); nuevos `controles.py`, `mensajes.py` y `texto.py` |
+| Version2.2 | Importaciones con los nombres reales de los archivos |
+| Version2.3 | Botón «Ordenar código» y archivo `contador.txt` |
+| Version2.4 | El código ya no se repite aunque se elimine un trámite |
+| Version2.5 | `solo_numeros()` y `clave_orden()` (orden sin tildes, ñ después de n) |
+| Version2.6 | Se quita una línea duplicada en `ordenar_burbuja()` |
+| Version2.7 | Método selección, búsqueda por apellido, DNI oculto, resumen por estado (arreglos paralelos), tabla como matriz y recursividad |
 
 ### Foto del equipo
 

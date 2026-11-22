@@ -5,7 +5,7 @@ from tkinter import ttk
 from GestorTramites import GestorTramites, TIPOS, ESTADOS, AREAS
 from autenticador import Autenticador
 import mensajes
-from texto import limpiar_nombre, limpiar_texto, es_dni_valido, es_vacio, a_entero
+from texto import limpiar_nombre, limpiar_texto, es_dni_valido, es_vacio, a_entero, ocultar_dni
 from controles import crear_caja, crear_combo, crear_boton, poner_texto, limpiar
 
 COLUMNAS = ("Código", "DNI", "Nombres", "Apellidos", "Tipo", "Área", "Estado", "Fecha")
@@ -67,7 +67,10 @@ class VentanaTramites:
         crear_boton(acciones, "Reporte Archivo", self.reporte_archivo, 1, 1)
         crear_boton(acciones, "Limpiar", self.limpiar, 1, 2)
         crear_boton(acciones, "Ordenar código", self.mostrar_por_codigo, 1, 3)
-        crear_boton(acciones, "Salir", ventana.destroy, 2, 0)
+        crear_boton(acciones, "Ordenar selección", self.mostrar_seleccion, 2, 0)
+        crear_boton(acciones, "Buscar apellido", self.buscar_apellido, 2, 1)
+        crear_boton(acciones, "Resumen estados", self.resumen_estados, 2, 2)
+        crear_boton(acciones, "Salir", ventana.destroy, 2, 3)
         self.aplicar_permisos()
 
         # Tabla de datos (Treeview)
@@ -154,7 +157,7 @@ class VentanaTramites:
                               "Código: " + str(t.codigo) + "\n"
                               "Fecha: " + t.fecha + "\n"
                               "Solicitante: " + t.nombre + " " + t.apellido + "\n"
-                              "DNI: " + t.dni + "\n"
+                              "DNI: " + ocultar_dni(t.dni) + "\n"
                               "Tipo: " + t.tipo + "\n"
                               "Área: " + t.area + "\n"
                               "Plazo estimado: 3 a 7 días hábiles")
@@ -201,17 +204,45 @@ class VentanaTramites:
         self.mostrar()
 
     def mostrar(self):
-        self.llenar_tabla(self.gestor.obtener_todos())
+        matriz = self.gestor.como_matriz()
+        for fila in self.tabla.get_children():
+            self.tabla.delete(fila)
+        for i in range(len(matriz)):
+            self.tabla.insert("", "end", values=matriz[i])
+        self.lblTotal.config(text="Trámites mostrados: " + str(len(matriz)))
 
     def mostrar_por_codigo(self):
         self.gestor.ordenar_por_codigo()
-        self.llenar_tabla(self.gestor.lista_tramites)        
+        self.llenar_tabla(self.gestor.lista_tramites)
+    
+    def mostrar_seleccion(self):
+        self.gestor.ordenar_seleccion()
+        self.llenar_tabla(self.gestor.lista_tramites)
 
+    def buscar_apellido(self):
+        texto = limpiar_texto(self.txtApellido.get())
+        if es_vacio(texto):
+            mensajes.error("Escriba el apellido o una parte en la caja Apellidos.")
+            return
+        resultado = self.gestor.buscar_por_apellido(texto)
+        self.llenar_tabla(resultado)
+        if len(resultado) == 0:
+            mensajes.aviso("No hay trámites con el apellido «" + texto + "».")        
+
+    def resumen_estados(self):
+        estados, cantidades = self.gestor.resumen_estados()
+        mensaje = "RESUMEN POR ESTADO\n\n"
+        for i in range(len(estados)):
+            mensaje = mensaje + estados[i] + ": " + str(cantidades[i]) + "\n"
+        mensajes.correcto(mensaje)
+    
     def reporte_archivo(self):
         lista = self.gestor.reporte_archivo()
         self.llenar_tabla(lista)
         if len(lista) == 0:
             mensajes.aviso("No hay trámites en el área de Archivo.")
+        else:
+            self.lblTotal.config(text="Total en Archivo: " + str(self.gestor.contar_en_area("Archivo")))
 
 
 def main():
