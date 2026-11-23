@@ -5,6 +5,7 @@ from tkinter import ttk
 from GestorTramites import GestorTramites, TIPOS, ESTADOS, AREAS
 from autenticador import Autenticador
 import mensajes
+import bitacora
 from texto import limpiar_nombre, limpiar_texto, es_dni_valido, es_vacio, a_entero, ocultar_dni
 from controles import crear_caja, crear_combo, crear_boton, poner_texto, limpiar
 
@@ -31,9 +32,11 @@ class VentanaAcceso:
             mensajes.error("Seleccione un rol.")
             return
         if not self.autenticador.validar(rol, self.txtClave.get()):
+            bitacora.evento("Acceso denegado: contraseña incorrecta para el rol " + rol)
             mensajes.error("Contraseña incorrecta.")
             self.txtClave.delete(0, "end")
             return
+        bitacora.evento("Acceso concedido: rol " + rol)
         self.marco.destroy()
         self.al_ingresar(rol)
 
@@ -153,6 +156,7 @@ class VentanaTramites:
             mensajes.aviso("Registro cancelado: faltan requisitos.")
         else:
             t = self.gestor.agregar(dni, nombre, apellido, tipo)
+            bitacora.evento("Trámite " + str(t.codigo) + " registrado (rol " + self.rol + ")")
             mensajes.correcto("CARGO DE RECEPCIÓN\n\n"
                               "Código: " + str(t.codigo) + "\n"
                               "Fecha: " + t.fecha + "\n"
@@ -183,6 +187,7 @@ class VentanaTramites:
         if estado == "" or area == "":
             mensajes.error("Seleccione el estado y el área.")
         elif self.gestor.modificar(codigo, estado, area):
+            bitacora.evento("Trámite " + str(codigo) + " modificado: " + estado + " / " + area + " (rol " + self.rol + ")")
             mensajes.correcto("Trámite " + str(codigo) + " actualizado y derivado a " + area + ".")
             self.limpiar()
             self.mostrar()
@@ -199,6 +204,7 @@ class VentanaTramites:
         if not mensajes.confirmar("¿Eliminar el trámite " + str(codigo) + "?"):
             return
         eliminado = self.gestor.eliminar(codigo)
+        bitacora.evento("Trámite " + str(eliminado.codigo) + " eliminado (rol " + self.rol + ")")
         mensajes.correcto("Trámite " + str(eliminado.codigo) + " de " + eliminado.nombre + " eliminado.")
         self.limpiar()
         self.mostrar()

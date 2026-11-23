@@ -39,6 +39,8 @@ sistema-tramites-cmi-tahuantinsuyo-bajo/
 ├── texto.py             # Limpieza y validación de textos (DNI, nombres)
 ├── controles.py         # Cajas, listas desplegables y botones reutilizables
 ├── mensajes.py          # Cuadros de mensaje (error, aviso, confirmación)
+├── bitacora.py          # Registro de eventos y errores en bitacora.log (módulo logging)
+├── pruebas.py           # Pruebas automáticas con unittest (python -m unittest pruebas -v)
 ├── tramites.txt         # Archivo donde se guardan los trámites
 ├── contador.txt         # Último código entregado (se crea al registrar)
 ├── capturas/            # Capturas de cada avance
