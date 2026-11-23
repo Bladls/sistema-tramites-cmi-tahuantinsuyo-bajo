@@ -4,6 +4,7 @@
 
 import os
 from tramite import Tramite
+import bitacora
 
 RUTA = "tramites.txt"
 RUTA_CONTADOR = "contador.txt"  # guarda el último código entregado
@@ -16,17 +17,27 @@ def guardar_tramites(lista_tramites):
             archivo.write("|".join(datos) + "\n")
 
 
+def leer_texto(ruta):
+    # Lee un archivo en UTF-8; si fue guardado en otra codificación (por ejemplo ANSI), lo lee con latin-1
+    try:
+        with open(ruta, "r", encoding="utf-8") as archivo:
+            return archivo.read()
+    except UnicodeDecodeError:
+        bitacora.error("El archivo " + ruta + " no está en UTF-8; se leyó como latin-1")
+        with open(ruta, "r", encoding="latin-1") as archivo:
+            return archivo.read()
+
+
 def cargar_tramites():
     lista = []
     if not os.path.exists(RUTA):
         return lista
 
-    with open(RUTA, "r", encoding="utf-8") as archivo:
-        for linea in archivo.read().split("\n"):
-            partes = linea.split("|")
-            if len(partes) == 8 and partes[0].isdigit():
-                tramite = Tramite(int(partes[0]), partes[1], partes[2], partes[3], partes[4], partes[5], partes[6], partes[7])
-                lista.append(tramite)
+    for linea in leer_texto(RUTA).split("\n"):
+        partes = linea.split("|")
+        if len(partes) == 8 and partes[0].isdigit():
+            tramite = Tramite(int(partes[0]), partes[1], partes[2], partes[3], partes[4], partes[5], partes[6], partes[7])
+            lista.append(tramite)
     return lista
 
 
@@ -41,8 +52,7 @@ def cargar_contador():
     if not os.path.exists(RUTA_CONTADOR):
         return 0
 
-    with open(RUTA_CONTADOR, "r", encoding="utf-8") as archivo:
-        texto = archivo.read().strip()
+    texto = leer_texto(RUTA_CONTADOR).strip()
     if texto.isdigit():
         return int(texto)
     return 0
