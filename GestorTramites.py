@@ -8,7 +8,20 @@ TIPOS = ["Referencia", "SIS", "Certificado_Salud", "Descanso_Medico"]
 ESTADOS = ["Registrado", "En evaluacion", "Denegado", "Aprobado"]
 AREAS = ["Jefatura", "Archivo", "Medico Jefe", "Diris Lima norte", "Hospital Referencia"]
 
-# 2. Definición del Gestor
+
+def mayor_por_nombre(a, b):
+    # True si el trámite a va después del b: compara el apellido y, si empatan, el nombre
+    apellido_a = clave_orden(a.apellido)
+    apellido_b = clave_orden(b.apellido)
+    return apellido_a > apellido_b or (apellido_a == apellido_b and clave_orden(a.nombre) > clave_orden(b.nombre))
+
+
+def mayor_por_codigo(a, b):
+    # True si el trámite a va después del b: compara el código
+    return a.codigo > b.codigo
+
+
+# Gestor: lista de trámites y operaciones sobre ella
 class GestorTramites:
     def __init__(self):
         self.lista_tramites = cargar_tramites()
@@ -58,33 +71,24 @@ class GestorTramites:
         guardar_tramites(self.lista_tramites)
         return eliminado
 
-    def ordenar_burbuja(self):
-        # Ordena por apellido y, si empata, por nombre
+    def ordenar_burbuja_con(self, es_mayor):
+        # Burbuja general: es_mayor(a, b) es una función que dice si a debe ir después de b
         lista = self.lista_tramites
         n = len(lista)
         for i in range(n - 1):
             for j in range(n - 1 - i):
-                a = lista[j]
-                b = lista[j + 1]
-                apellido_a = clave_orden(a.apellido)
-                apellido_b = clave_orden(b.apellido)
-                if apellido_a > apellido_b or (apellido_a == apellido_b and clave_orden(a.nombre) > clave_orden(b.nombre)):
-                    lista[j] = b
-                    lista[j + 1] = a
+                if es_mayor(lista[j], lista[j + 1]):
+                    temporal = lista[j]
+                    lista[j] = lista[j + 1]
+                    lista[j + 1] = temporal
 
+    def ordenar_burbuja(self):
+        # Ordena por apellido y, si empata, por nombre
+        self.ordenar_burbuja_con(mayor_por_nombre)
 
     def ordenar_por_codigo(self):
         # Ordena por código de menor a mayor (orden de llegada a mesa de partes)
-        lista = self.lista_tramites
-        n = len(lista)
-        for i in range(n - 1):
-            for j in range(n - 1 - i):
-                a = lista[j]
-                b = lista[j + 1]
-                if a.codigo > b.codigo:
-                    lista[j] = b
-                    lista[j + 1] = a
-
+        self.ordenar_burbuja_con(mayor_por_codigo)
 
     def obtener_todos(self):
         self.ordenar_burbuja()
@@ -106,9 +110,7 @@ class GestorTramites:
             for j in range(i + 1, n):
                 a = lista[j]
                 b = lista[menor]
-                apellido_a = clave_orden(a.apellido)
-                apellido_b = clave_orden(b.apellido)
-                if apellido_a < apellido_b or (apellido_a == apellido_b and clave_orden(a.nombre) < clave_orden(b.nombre)):
+                if mayor_por_nombre(b, a):
                     menor = j
             if menor != i:
                 temporal = lista[i]
